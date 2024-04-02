@@ -6,59 +6,48 @@ private:
     {
         int duration = interval[1] - interval[0];
         int start = interval[0], end = interval[1];
-        cout<<start<<" "<<end<<"\n";
         auto it = ranges.upper_bound(start);
 
         while(it!=ranges.end())
         {
-            cout<<"loop is here\n";
-            if((*it).first <= end)
+            if((*it).first > end)break;
+
+            if((*it).second <=end)
             {
-                if((*it).second <=end)
-                {
-                    duration-= (*it).second - (*it).first;
-                }
-                else
-                {
-                    duration-= end - (*it).first;
-                    end = (*it).second;
-                    it++;
-                    ranges.erase(prev(it));
-                    cout<<duration<<" inside loop2\n";
-                    break;
-                }
+                duration-= (*it).second - (*it).first;
             }
             else
             {
+                duration-= end - (*it).first;
+                end = (*it).second;
+                it++;
+                ranges.erase(prev(it));
                 break;
             }
-
+            
             it++;
             ranges.erase(prev(it));
-            cout<<duration<<" inside loop\n";
         }
         
-        cout<<duration<<"\n";
         if(it!=ranges.begin())
         {
             it = prev(it);
+            if((*it).second >= end)
+            {
+                return 0;
+            }
+
             if((*it).second >= start)
             {
-                if((*it).second >= end)
-                {
-                    return 0;
-                }
-                else
-                {
-                    duration-= (*it).second - start; 
-                    start = (*it).first;
-                    ranges.erase(it);
-                }
+                duration-= (*it).second - start; 
+                start = (*it).first;
+                ranges.erase(it);
+
             }
         }
         
         ranges[start] = end;
-        return max(duration, 0);
+        return duration;
     } 
 
 public:
